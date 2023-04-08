@@ -3,7 +3,8 @@
 
 #include <functional>
 
-struct SolverTraits{
+struct SolverTraits
+{
     using ScalarType = double;
     using VariableType = double;
     using ReturnType = double;
