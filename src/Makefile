@@ -3,11 +3,14 @@ CXXFLAGS ?= -std=c++20
 CPPFLAGS ?= -O3 -Wall -I. -Wno-conversion-null -Wno-deprecated-declarations
 
 SRCS = $(wildcard *.cpp)
-OBJS = $(SRCS:.cpp=.o)
+EXEC_SRCS = $(filter main%.cpp,$(SRCS))
+
 HEADERS = $(wildcard *.hpp)
 
-EXEC_SRCS = $(filter main%.cpp,$(SRCS))
+OBJS = $(SRCS:.cpp=.o)
 EXEC_OBJS = $(EXEC_SRCS:.cpp=.o)
+DEP_OBJS = $(filter-out $(EXEC_OBJS),$(SRCS:.cpp=.o))
+
 EXEC = $(EXEC_SRCS:.cpp=)
 
 CPPFLAGS += -I ./include
@@ -17,15 +20,16 @@ LDLIBS += # -l
 .PHONY = all clean distclean test run
 .DEFAULT_GOAL = all
 
-all: $(EXEC) 
+all: $(EXEC)
 
-$(EXEC): $(EXEC_OBJS)
+$(EXEC): $(OBJS) $(SRCS) $(HEADERS)
+	@echo "Linker.."
 	@for file in $(EXEC); \
 	do \
-	  $(CXX) $(CXXFLAGS) $(LDFLAGS) $(LDLIBS) $${file}.o -o $${file}; \
+	  $(CXX) $(CXXFLAGS) $(LDFLAGS) $(LDLIBS) $(DEP_OBJS) $${file}.o -o $${file}; \
 	done
 
-$(EXEC_OBJ): $(EXEC_SRCS) $(HEADERS)
+$(OBJS): $(SRCS) $(HEADERS)
 
 clean:
 	$(RM) $(OBJS)
