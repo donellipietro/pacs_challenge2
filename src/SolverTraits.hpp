@@ -1,6 +1,7 @@
 #ifndef __SOLVER_TRAITS__
 #define __SOLVER_TRAITS__
 
+#include <iostream>
 #include <functional>
 
 struct SolverTraits

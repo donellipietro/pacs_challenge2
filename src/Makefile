@@ -13,7 +13,7 @@ DEP_OBJS = $(filter-out $(EXEC_OBJS),$(SRCS:.cpp=.o))
 
 EXEC = $(EXEC_SRCS:.cpp=)
 
-CPPFLAGS += -I ./include
+CPPFLAGS += -I ./include -I ${MY_PACS_ROOT}/include
 LDFLAGS += -L ./lib -Wl,-rpath=./lib
 LDLIBS += # -l
 
@@ -21,6 +21,12 @@ LDLIBS += # -l
 .DEFAULT_GOAL = all
 
 all: $(EXEC)
+
+run: main
+	./main
+
+test: main_test
+	./main_test
 
 $(EXEC): $(OBJS) $(SRCS) $(HEADERS)
 	@echo "Linker.."

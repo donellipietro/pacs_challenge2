@@ -11,21 +11,18 @@ public:
 
 protected:
     T::FunctionType f_;
-    T::ScalarType tol_;
-    unsigned int maxIter_;
+    double tol_;
 
 public:
     SolverBase() = default;
     SolverBase(const T::FunctionType &f,
-               T::ScalarType tol = 1e-4,
-               unsigned int maxIter = 150) : f_(f), tol_(tol), maxIter_(maxIter) {}
+               double tol = 1e-4) : f_(f), tol_(tol) {}
 
     // setters
     void setFunction(const T::FunctionType &f) { f_ = f; };
-    void setTollerance(T::ScalarType tol) { tol_ = tol; };
-    void setMaxIter(unsigned int maxIter) { maxIter_ = maxIter; };
+    void setTollerance(double tol) { tol_ = tol; };
 
-    virtual T::ReturnType solve() = 0;
+    virtual T::VariableType solve() = 0;
 };
 
 #endif // __SOLVER_BASE__
