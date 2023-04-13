@@ -26,10 +26,7 @@ SolverTraits::VariableType Secant::solve()
 SolverTraits::VariableType Bisection::solve()
 {
     T::ReturnType ya = f_(a_);
-    T::ReturnType yb = f_(b_);
     double delta = b_ - a_;
-    if (ya * yb > 0)
-        std::cerr << "Function must change sign at the two end values" << std::endl;
     T::ReturnType yc{ya};
     T::VariableType c{a_};
     while (std::abs(delta) > 2 * tol_)
@@ -38,7 +35,6 @@ SolverTraits::VariableType Bisection::solve()
         yc = f_(c);
         if (yc * ya < 0.0)
         {
-            yb = yc;
             b_ = c;
         }
         else
@@ -72,3 +68,87 @@ SolverTraits::VariableType Newton::solve()
 
     return a;
 };
+
+bool checkChangeOfSign(const SolverTraits::FunctionType &f, SolverTraits::VariableType &a, SolverTraits::VariableType &b)
+{
+    if (f(a) * f(b) > 0)
+    {
+        std::cout << "Function must change sign at the two end values!" << std::endl;
+
+        SolverTraits::VariableType new_a;
+        SolverTraits::VariableType new_b;
+        bool status;
+
+        std::cout << std::endl;
+        std::cout << "Trying to find an interval that brackets the zero of f starting from a" << std::endl;
+        std::tie(new_a, new_b, status) = bracketInterval(f, a);
+
+        if (!status)
+        {
+            std::cout << std::endl;
+            std::cout << "Trying to find an interval that brackets the zero of f starting from b" << std::endl;
+            std::tie(new_a, new_b, status) = bracketInterval(f, b);
+        }
+
+        if (!status)
+        {
+            std::cout << "It was not possible to find an interval that brackets the zero of f, try with another method" << std::endl;
+            return false;
+        }
+
+        std::cout << "Interval found! " << std::endl
+                  << "Initial interval: a = " << a << ", b = " << b << std::endl
+                  << "New interval: a = " << new_a << ", b = " << new_b << std::endl
+                  << std::endl;
+        a = new_a;
+        b = new_b;
+    }
+    return true;
+}
+
+/*
+ * This function tries to find an interval that brackets the zero of a
+ * function f. It does so by sampling the value of f at points
+ * generated starting from a given point
+ *
+ * Parameters:
+ * - f: The function.
+ * - x1: initial point
+ * - h_ initial increment for the sampling
+ * - maxIter: maximum number of iterations
+ *
+ * Return:
+ * It returns a tuple with the bracketing points and a bool which is true if number
+ * of iterations not exceeded (bracket found)
+ */
+std::tuple<SolverTraits::VariableType, SolverTraits::VariableType, bool>
+bracketInterval(const SolverTraits::FunctionType &f, SolverTraits::VariableType x1,
+                double h, unsigned int maxIter)
+{
+    constexpr double expandFactor = 1.5;
+    h = std::abs(h);
+    auto direction = 1.0;
+    SolverTraits::VariableType x2 = x1 + h;
+    SolverTraits::ReturnType y1 = f(x1);
+    SolverTraits::ReturnType y2 = f(x2);
+    unsigned int iter = 0u;
+
+    // get initial decrement direction
+    while ((y1 * y2 > 0) && (iter < maxIter))
+    {
+        ++iter;
+        if (std::abs(y2) > std::abs(y1))
+        {
+            std::swap(y1, y2);
+            std::swap(x1, x2);
+            // change direction
+        }
+        direction = (x2 > x1) ? 1.0 : -1.0;
+        x1 = x2;
+        y1 = y2;
+        x2 += direction * h;
+        y2 = f(x2);
+        h *= expandFactor;
+    }
+    return std::make_tuple(x1, x2, iter < maxIter);
+}

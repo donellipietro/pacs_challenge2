@@ -3,6 +3,12 @@
 
 #include "SolverBase.hpp"
 
+bool checkChangeOfSign(const SolverTraits::FunctionType &f,
+                       SolverTraits::VariableType &a, SolverTraits::VariableType &b);
+
+std::tuple<SolverTraits::VariableType, SolverTraits::VariableType, bool>
+bracketInterval(const SolverTraits::FunctionType &f, SolverTraits::VariableType x1,
+                double h = 0.01, unsigned int maxIter = 200);
 class Secant : public SolverBase
 {
 private:
@@ -43,7 +49,10 @@ public:
               T::VariableType a,
               T::VariableType b,
               double tol = 1e-4,
-              unsigned int maxIter = 150) : SolverBase(f, tol), a_(a), b_(b) {}
+              unsigned int maxIter = 150) : SolverBase(f, tol), a_(a), b_(b)
+    {
+        checkChangeOfSign(f_, a_, b_);
+    }
 
     // setters
     void setA(T::VariableType a) { a_ = a; };
