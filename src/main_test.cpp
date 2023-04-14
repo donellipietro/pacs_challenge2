@@ -64,10 +64,8 @@ int main(int argc, char **argv)
     std::cout << std::endl;
 
     Bisection solver4(f, -5, -1, 1.e-5);
-    auto result4 = apsc::bisection<SolverTraits::FunctionType>(f, -1, 0);
 
-    std::cout << "- basiZeroFun: " << result4 << std::endl;
-    std::cout << "- SolverBase:  " << solver4.solve() << std::endl;
+    std::cout << "Zero:  " << solver4.solve() << std::endl;
     std::cout << std::endl;
 
     return 0;
