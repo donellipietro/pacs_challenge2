@@ -3,7 +3,7 @@
 
 #include "SolverBase.hpp"
 
-bool checkChangeOfSign(const SolverTraits::FunctionType &f,
+void checkChangeOfSign(const SolverTraits::FunctionType &f,
                        SolverTraits::VariableType &a, SolverTraits::VariableType &b);
 
 std::tuple<SolverTraits::VariableType, SolverTraits::VariableType, bool>

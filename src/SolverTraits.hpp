@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <functional>
+#include <exception>
 
 struct SolverTraits
 {

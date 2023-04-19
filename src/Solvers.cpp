@@ -69,31 +69,31 @@ SolverTraits::VariableType Newton::solve()
     return a;
 };
 
-bool checkChangeOfSign(const SolverTraits::FunctionType &f, SolverTraits::VariableType &a, SolverTraits::VariableType &b)
+void checkChangeOfSign(const SolverTraits::FunctionType &f, SolverTraits::VariableType &a, SolverTraits::VariableType &b)
 {
     if (f(a) * f(b) > 0)
     {
         std::cout << "Function must change sign at the two end values!" << std::endl;
+        std::cout << std::endl;
 
         SolverTraits::VariableType new_a;
         SolverTraits::VariableType new_b;
         bool status;
 
-        std::cout << std::endl;
         std::cout << "Trying to find an interval that brackets the zero of f starting from a" << std::endl;
+        std::cout << std::endl;
         std::tie(new_a, new_b, status) = bracketInterval(f, a);
 
         if (!status)
         {
-            std::cout << std::endl;
             std::cout << "Trying to find an interval that brackets the zero of f starting from b" << std::endl;
+            std::cout << std::endl;
             std::tie(new_a, new_b, status) = bracketInterval(f, b);
         }
 
         if (!status)
         {
-            std::cout << "It was not possible to find an interval that brackets the zero of f, try with another method" << std::endl;
-            return false;
+            throw std::invalid_argument("It was not possible to find an interval that brackets the zero of f");
         }
 
         std::cout << "Interval found! " << std::endl
@@ -103,7 +103,6 @@ bool checkChangeOfSign(const SolverTraits::FunctionType &f, SolverTraits::Variab
         a = new_a;
         b = new_b;
     }
-    return true;
 }
 
 /*

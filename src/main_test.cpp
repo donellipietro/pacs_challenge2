@@ -68,5 +68,30 @@ int main(int argc, char **argv)
     std::cout << "Zero:  " << solver4.solve() << std::endl;
     std::cout << std::endl;
 
+    // Bisection
+    std::cout << std::endl;
+    std::cout << "########################################" << std::endl;
+    std::cout << "# Test 4: Bisection + switch to secant #" << std::endl;
+    std::cout << "########################################" << std::endl;
+    std::cout << std::endl;
+
+    SolverTraits::FunctionType f1{
+        [](const double x)
+        { return x * x; }};
+    Bisection solver5(f1, -1, 1, 1.e-5);
+
+    try
+    {
+        std::cout << "Zero:  " << solver5.solve() << std::endl;
+        std::cout << std::endl;
+    }
+    catch (const std::exception &e)
+    {
+        std::cout << e.what() << std::endl;
+        std::cout << std::endl;
+        std::cout << "Switching to Secant solver" << std::endl;
+        std::cout << std::endl;
+    }
+
     return 0;
 }
