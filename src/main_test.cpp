@@ -3,6 +3,7 @@
 
 #include "Solvers.hpp"
 #include "basicZeroFun.hpp"
+#include "SolverFactory.hpp"
 
 int main(int argc, char **argv)
 {
@@ -13,6 +14,10 @@ int main(int argc, char **argv)
     SolverTraits::FunctionType df{
         [](const double x)
         { return -M_PI * std::exp(M_PI * x); }};
+
+    SolverTraits::FunctionType f1{
+        [](const double x)
+        { return x * x; }};
 
     // Secant
     std::cout << std::endl;
@@ -75,13 +80,13 @@ int main(int argc, char **argv)
     std::cout << "########################################" << std::endl;
     std::cout << std::endl;
 
-    SolverTraits::FunctionType f1{
-        [](const double x)
-        { return x * x; }};
-    Bisection solver5(f1, -1, 1, 1.e-5);
-
+    // By using the constructor
+    // -> The user has to handle the exception by himself
+    std::cout << "Constructor:" << std::endl;
+    std::cout << std::endl;
     try
     {
+        Bisection solver5(f1, -1, 1, 1.e-5);
         std::cout << "Zero:  " << solver5.solve() << std::endl;
         std::cout << std::endl;
     }
@@ -89,9 +94,16 @@ int main(int argc, char **argv)
     {
         std::cout << e.what() << std::endl;
         std::cout << std::endl;
-        std::cout << "Switching to Secant solver" << std::endl;
-        std::cout << std::endl;
     }
+
+    // By using the factory
+    // -> The factory catches the possible exception and tries
+    //    to solve the problem with a different solver
+    std::cout << "Factory:" << std::endl;
+    std::cout << std::endl;
+    auto solver5 = SolverFactory<Bisection>(f1, -1, 1, 1.e-5);
+    std::cout << "Zero:  " << solver5->solve() << std::endl;
+    std::cout << std::endl;
 
     return 0;
 }
