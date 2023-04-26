@@ -122,5 +122,34 @@ int main(int argc, char **argv)
     std::cout << "- QuasiNewton:  " << solver6_QN.solve() << std::endl;
     std::cout << std::endl;
 
+    // Newton -> QuasiNewton
+    std::cout << std::endl;
+    std::cout << "######################################" << std::endl;
+    std::cout << "# Test 7: From Newton to QuasiNewton #" << std::endl;
+    std::cout << "######################################" << std::endl;
+    std::cout << std::endl;
+
+    // Constructor
+    std::cout << "Constructor:" << std::endl;
+    std::cout << std::endl;
+    try
+    {
+        Newton solver7(f, -0.5, 1e-4, 1e-10, 150);
+        std::cout << "Zero:  " << solver7.solve() << std::endl;
+        std::cout << std::endl;
+    }
+    catch (const std::exception &e)
+    {
+        std::cout << e.what() << std::endl;
+        std::cout << std::endl;
+    }
+
+    // Factory
+    std::cout << "Factory:" << std::endl;
+    std::cout << std::endl;
+    auto solver7 = SolverFactory<Newton>(f, -0.5, 1e-4, 1e-10, 150);
+    std::cout << "Zero:  " << solver7->solve() << std::endl;
+    std::cout << std::endl;
+
     return 0;
 }

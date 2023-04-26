@@ -78,6 +78,14 @@ public:
     // constructors
     Newton() = default;
     Newton(const T::FunctionType &f,
+           T::VariableType x0,
+           double tol,
+           double tola,
+           unsigned int maxIter)
+    {
+        throw std::invalid_argument("You asked for Newton solver but the derivative of the function has not been provided!");
+    }
+    Newton(const T::FunctionType &f,
            const T::FunctionType &df,
            T::VariableType x0,
            double tol = 1e-4,
@@ -114,9 +122,21 @@ public:
         setAbsoluteTollerance(tola);
         setMaxIter(maxIter);
     }
+    // If the derivative is provided QuasiNewton == Newton
+    // This redoundancy is needed becasuse to be able to switch from Newton to QuasiNewton
+    // in the factory we need a compatible constructor.
+    QuasiNewton(const T::FunctionType &f,
+                const T::FunctionType &df,
+                T::VariableType x0,
+                double tol = 1e-4,
+                double tola = 1e-10,
+                unsigned int maxIter = 150) : Newton(f, df, x0, tol, tola, maxIter){};
 
     // setters
-    void setAbsoluteTollerance(double tola) { tola_ = tola; };
+    void setAbsoluteTollerance(double tola)
+    {
+        tola_ = tola;
+    };
     void setInitializationPoint(T::VariableType x0) { x0_ = x0; };
 };
 
