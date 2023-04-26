@@ -16,7 +16,8 @@ int main(int argc, char **argv)
     auto solver1 = SolverFactory<Secant>(f, -1., 0);
     std::cout << solver1->solve() << std::endl;
 
-    auto solver2 = SolverFactory<Bisection>(f, -1., 0.);
+    std::array<SolverTraits::VariableType, 2> interval{-1., 0.};
+    auto solver2 = SolverFactory<Bisection>(f, interval);
     std::cout << solver2->solve() << std::endl;
 
     auto solver3 = SolverFactory<Newton>(f, df, -1.);

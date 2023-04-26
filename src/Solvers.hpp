@@ -2,9 +2,13 @@
 #define __SOLVERS__
 
 #include "SolverBase.hpp"
+#include <array>
 
 void checkChangeOfSign(const SolverTraits::FunctionType &f,
                        SolverTraits::VariableType &a, SolverTraits::VariableType &b);
+
+void searchBracketInterval(const SolverTraits::FunctionType &f,
+                           SolverTraits::VariableType x1, SolverTraits::VariableType &a, SolverTraits::VariableType &b);
 
 std::tuple<SolverTraits::VariableType, SolverTraits::VariableType, bool>
 bracketInterval(const SolverTraits::FunctionType &f, SolverTraits::VariableType x1,
@@ -24,11 +28,18 @@ public:
     // constructors
     Secant() = default;
     Secant(const T::FunctionType &f,
-           T::VariableType a,
-           T::VariableType b,
+           T::VariableType x1,
+           double tol = 1e-4,
+           unsigned int maxIter = 150) : SolverBase(f, tol)
+    {
+        throw std::invalid_argument("Secant method requires an interval but only one point has been provided!");
+    }
+    Secant(const T::FunctionType &f,
+           std::array<T::VariableType, 2> interval,
            double tol = 1e-4,
            double tola = 1e-10,
-           unsigned int maxIter = 150) : SolverBase(f, tol), a_(a), b_(b), tola_(tola), maxIter_(maxIter) {}
+           unsigned int maxIter = 150)
+        : SolverBase(f, tol), a_(interval[0]), b_(interval[1]), tola_(tola), maxIter_(maxIter) {}
 
     // setters
     void setAbsoluteTollerance(double tola) { tola_ = tola; };
@@ -49,10 +60,14 @@ public:
     // constructors
     Bisection() = default;
     Bisection(const T::FunctionType &f,
-              T::VariableType a,
-              T::VariableType b,
+              T::VariableType x1,
               double tol = 1e-4,
-              unsigned int maxIter = 150) : SolverBase(f, tol), a_(a), b_(b)
+              unsigned int maxIter = 150) : SolverBase(f, tol)
+    {
+        searchBracketInterval(f_, x1, a_, b_);
+    }
+    Bisection(const T::FunctionType &f, std::array<T::VariableType, 2> interval, double tol = 1e-4, unsigned int maxIter = 150)
+        : SolverBase(f, tol), a_(interval[0]), b_(interval[1])
     {
         checkChangeOfSign(f_, a_, b_);
     }
@@ -79,9 +94,9 @@ public:
     Newton() = default;
     Newton(const T::FunctionType &f,
            T::VariableType x0,
-           double tol,
-           double tola,
-           unsigned int maxIter)
+           double tol = 1e-4,
+           double tola = 1e-10,
+           unsigned int maxIter = 150)
     {
         throw std::invalid_argument("You asked for Newton solver but the derivative of the function has not been provided!");
     }

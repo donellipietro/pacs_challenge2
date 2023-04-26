@@ -29,7 +29,7 @@ int main(int argc, char **argv)
     std::cout << "##################" << std::endl;
     std::cout << std::endl;
 
-    Secant solver1(f, -1, 0, 1e-4, 1e-10, 150);
+    Secant solver1(f, std::array<SolverTraits::VariableType, 2>{-1, 0}, 1e-4, 1e-10, 150);
     auto [result1, status1] = apsc::secant<SolverTraits::FunctionType>(f, -1, 0);
 
     std::cout << "- basiZeroFun: " << result1 << std::endl;
@@ -43,7 +43,7 @@ int main(int argc, char **argv)
     std::cout << "#####################" << std::endl;
     std::cout << std::endl;
 
-    Bisection solver2(f, -1, 0, 1.e-5);
+    Bisection solver2(f, std::array<SolverTraits::VariableType, 2>{-1, 0}, 1.e-5);
     auto result2 = apsc::bisection<SolverTraits::FunctionType>(f, -1, 0);
 
     std::cout << "- basiZeroFun: " << result2 << std::endl;
@@ -71,7 +71,7 @@ int main(int argc, char **argv)
     std::cout << "#######################################" << std::endl;
     std::cout << std::endl;
 
-    Bisection solver4(f, -5, -1, 1.e-5);
+    Bisection solver4(f, std::array<SolverTraits::VariableType, 2>{-5, -1}, 1.e-5);
 
     std::cout << "Zero:  " << solver4.solve() << std::endl;
     std::cout << std::endl;
@@ -89,7 +89,7 @@ int main(int argc, char **argv)
     std::cout << std::endl;
     try
     {
-        Bisection solver5(f1, -1, 1, 1.e-5);
+        Bisection solver5(f1, std::array<SolverTraits::VariableType, 2>{-1, 1}, 1.e-5);
         std::cout << "Zero:  " << solver5.solve() << std::endl;
         std::cout << std::endl;
     }
@@ -104,9 +104,40 @@ int main(int argc, char **argv)
     //    to solve the problem with a different solver
     std::cout << "Factory:" << std::endl;
     std::cout << std::endl;
-    auto solver5 = SolverFactory<Bisection>(f1, -1, 1, 1.e-5);
+    auto solver5 = SolverFactory<Bisection>(f1, std::array<SolverTraits::VariableType, 2>{-1, 1}, 1.e-5);
     std::cout << "Zero:  " << solver5->solve() << std::endl;
     std::cout << std::endl;
+
+    // Bisection
+    std::cout << std::endl;
+    std::cout << "########################################################" << std::endl;
+    std::cout << "# Test 5bis: Bisection when only one point is provided #" << std::endl;
+    std::cout << "########################################################" << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "An interval exists:" << std::endl;
+    std::cout << std::endl;
+
+    Bisection solver5bis1(f, -5, 1.e-5);
+
+    std::cout << "Zero:  " << solver5bis1.solve() << std::endl;
+    std::cout << std::endl;
+
+    std::cout << "An interval does not exist:" << std::endl;
+    std::cout << std::endl;
+
+    try
+    {
+        Bisection solver5bis2(f1, -1, 1.e-5);
+
+        std::cout << "Zero:  " << solver5bis2.solve() << std::endl;
+        std::cout << std::endl;
+    }
+    catch (const std::exception &e)
+    {
+        std::cout << e.what() << std::endl;
+        std::cout << std::endl;
+    }
 
     // QuasiNewton
     std::cout << std::endl;

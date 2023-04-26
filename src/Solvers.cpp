@@ -105,6 +105,27 @@ void checkChangeOfSign(const SolverTraits::FunctionType &f, SolverTraits::Variab
     }
 }
 
+void searchBracketInterval(const SolverTraits::FunctionType &f,
+                           SolverTraits::VariableType x1, SolverTraits::VariableType &a, SolverTraits::VariableType &b)
+{
+    std::cout << "Trying to find an interval that brackets the zero of f starting from the provided point" << std::endl;
+    std::cout << std::endl;
+    auto [new_a, new_b, status] = bracketInterval(f, x1);
+    if (status)
+    {
+        std::cout << "Interval found! " << std::endl
+                  << "Initial point: x1 = " << x1 << std::endl
+                  << "New interval: a = " << new_a << ", b = " << new_b << std::endl
+                  << std::endl;
+        a = new_a;
+        b = new_b;
+    }
+    else
+    {
+        throw std::invalid_argument("It was not possible to find an interval that brackets the zero of f");
+    }
+}
+
 /*
  * This function tries to find an interval that brackets the zero of a
  * function f. It does so by sampling the value of f at points
