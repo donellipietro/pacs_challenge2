@@ -18,6 +18,9 @@ int main(int argc, char **argv)
     SolverTraits::FunctionType f1{
         [](const double x)
         { return x * x; }};
+    SolverTraits::FunctionType df1{
+        [](const double x)
+        { return 2 * x; }};
 
     // Secant
     std::cout << std::endl;
@@ -76,7 +79,7 @@ int main(int argc, char **argv)
     // Bisection
     std::cout << std::endl;
     std::cout << "########################################" << std::endl;
-    std::cout << "# Test 4: Bisection + switch to secant #" << std::endl;
+    std::cout << "# Test 5: Bisection + switch to secant #" << std::endl;
     std::cout << "########################################" << std::endl;
     std::cout << std::endl;
 
@@ -103,6 +106,20 @@ int main(int argc, char **argv)
     std::cout << std::endl;
     auto solver5 = SolverFactory<Bisection>(f1, -1, 1, 1.e-5);
     std::cout << "Zero:  " << solver5->solve() << std::endl;
+    std::cout << std::endl;
+
+    // QuasiNewton
+    std::cout << std::endl;
+    std::cout << "#######################" << std::endl;
+    std::cout << "# Test 6: QuasiNewton #" << std::endl;
+    std::cout << "#######################" << std::endl;
+    std::cout << std::endl;
+
+    Newton solver6_N(f1, df1, -0.5, 1e-4, 1e-10, 150);
+    QuasiNewton solver6_QN(f1, -0.5, 1e-4, 1e-10, 150);
+
+    std::cout << "- Newton: " << solver6_N.solve() << std::endl;
+    std::cout << "- QuasiNewton:  " << solver6_QN.solve() << std::endl;
     std::cout << std::endl;
 
     return 0;

@@ -151,3 +151,10 @@ bracketInterval(const SolverTraits::FunctionType &f, SolverTraits::VariableType 
     }
     return std::make_tuple(x1, x2, iter < maxIter);
 }
+
+// Approximates the first derivative of a function with centered finite differences
+double
+finiteDiff(const SolverTraits::FunctionType &f, const SolverTraits::VariableType x, const double h)
+{
+    return (f(x + h) - f(x - h)) / (2 * h);
+}
