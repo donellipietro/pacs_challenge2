@@ -105,7 +105,7 @@ int main(int argc, char **argv)
     std::cout << "Factory:" << std::endl;
     std::cout << std::endl;
     auto solver5 = SolverFactory<Bisection>(f1, std::array<SolverTraits::VariableType, 2>{-1, 1}, 1.e-5);
-    std::cout << "Zero:  " << solver5->solve() << std::endl;
+    // std::cout << "Zero:  " << solver5->solve() << std::endl;
     std::cout << std::endl;
 
     // Bisection
@@ -123,7 +123,7 @@ int main(int argc, char **argv)
     std::cout << "Zero:  " << solver5bis1.solve() << std::endl;
     std::cout << std::endl;
 
-    std::cout << "An interval does not exist:" << std::endl;
+    std::cout << "An interval does not exist, constructor:" << std::endl;
     std::cout << std::endl;
 
     try
@@ -138,6 +138,13 @@ int main(int argc, char **argv)
         std::cout << e.what() << std::endl;
         std::cout << std::endl;
     }
+
+    std::cout << "An interval does not exist, factory:" << std::endl;
+    std::cout << std::endl;
+
+    auto solver5bis3 = SolverFactory<Bisection>(f1, -1, 1.e-5);
+    std::cout << "Zero:  " << solver5bis3->solve() << std::endl;
+    std::cout << std::endl;
 
     // QuasiNewton
     std::cout << std::endl;

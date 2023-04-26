@@ -101,11 +101,25 @@ public:
         throw std::invalid_argument("You asked for Newton solver but the derivative of the function has not been provided!");
     }
     Newton(const T::FunctionType &f,
+           std::array<T::VariableType, 2> interval,
+           double tol = 1e-4,
+           double tola = 1e-10,
+           unsigned int maxIter = 150)
+    {
+        throw std::invalid_argument("You asked for Newton solver but the derivative of the function has not been provided!");
+    }
+    Newton(const T::FunctionType &f,
            const T::FunctionType &df,
            T::VariableType x0,
            double tol = 1e-4,
            double tola = 1e-10,
            unsigned int maxIter = 150) : SolverBase(f, tol), df_(df), x0_(x0), tola_(tola), maxIter_(maxIter) {}
+    Newton(const T::FunctionType &f,
+           const T::FunctionType &df,
+           std::array<T::VariableType, 2> interval,
+           double tol = 1e-4,
+           double tola = 1e-10,
+           unsigned int maxIter = 150) : Newton(f, interval[0], tol, tola, maxIter){};
 
     // setters
     void setDerivative(T::FunctionType df) { df_ = df; };
@@ -123,6 +137,11 @@ class QuasiNewton : public Newton
 public:
     // constructors
     QuasiNewton();
+    QuasiNewton(const T::FunctionType &f,
+                std::array<T::VariableType, 2> interval,
+                double tol = 1e-4,
+                double tola = 1e-10,
+                unsigned int maxIter = 150) : QuasiNewton(f, interval[0], tol, tola, maxIter){};
     QuasiNewton(const T::FunctionType &f,
                 T::VariableType x0,
                 double tol = 1e-4,

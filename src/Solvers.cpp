@@ -12,12 +12,20 @@ SolverTraits::VariableType Secant::solve()
     {
         ++iter;
         double yb = f_(b_);
-        c = a_ - ya * (b_ - a_) / (yb - ya);
+        double den = (yb - ya);
+        if (den == 0)
+            throw std::invalid_argument("Division by zero detected, method stopped.");
+        c = a_ - ya * (b_ - a_) / den;
         double yc = f_(c);
         resid = std::abs(yc);
         goOn = resid > check;
         ya = yc;
         a_ = c;
+    }
+
+    if (iter == maxIter_)
+    {
+        throw std::invalid_argument("The maximum number of iterations has been reached without convergence!");
     }
 
     return c;
@@ -60,10 +68,18 @@ SolverTraits::VariableType Newton::solve()
     while (goOn && iter < maxIter_)
     {
         ++iter;
-        a += -ya / df_(a);
+        auto dfa = df_(a);
+        if (dfa == 0)
+            throw std::invalid_argument("Division by zero detected, method stopped.");
+        a += -ya / dfa;
         ya = f_(a);
         resid = std::abs(ya);
         goOn = resid > check;
+    }
+
+    if (iter == maxIter_)
+    {
+        throw std::invalid_argument("The maximum number of iterations has been reached without convergence!");
     }
 
     return a;
