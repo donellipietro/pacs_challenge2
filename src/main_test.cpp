@@ -73,7 +73,7 @@ int main(int argc, char **argv)
 
     Bisection solver4(f, std::array<SolverTraits::VariableType, 2>{-5, -1}, 1.e-5);
 
-    std::cout << "Zero:  " << solver4.solve() << std::endl;
+    std::cout << "Zero: " << solver4.solve() << std::endl;
     std::cout << std::endl;
 
     // Bisection
@@ -89,8 +89,8 @@ int main(int argc, char **argv)
     std::cout << std::endl;
     try
     {
-        Bisection solver5(f1, std::array<SolverTraits::VariableType, 2>{-1, 1}, 1.e-5);
-        std::cout << "Zero:  " << solver5.solve() << std::endl;
+        Bisection solver5(f1, std::array<SolverTraits::VariableType, 2>{-1, 0.3}, 1.e-5);
+        std::cout << "Zero: " << solver5.solve() << std::endl;
         std::cout << std::endl;
     }
     catch (const std::exception &e)
@@ -104,8 +104,9 @@ int main(int argc, char **argv)
     //    to solve the problem with a different solver
     std::cout << "Factory:" << std::endl;
     std::cout << std::endl;
-    auto solver5 = SolverFactory<Bisection>(f1, std::array<SolverTraits::VariableType, 2>{-1, 1}, 1.e-5);
-    // std::cout << "Zero:  " << solver5->solve() << std::endl;
+    auto solver5 = SolverFactory<Bisection>(f1, std::array<SolverTraits::VariableType, 2>{-1, 0.3}, 1.e-5);
+    auto result5 = SafeSolve(solver5);
+    std::cout << "Zero: " << result5 << std::endl;
     std::cout << std::endl;
 
     // Bisection
@@ -120,7 +121,7 @@ int main(int argc, char **argv)
 
     Bisection solver5bis1(f, -5, 1.e-5);
 
-    std::cout << "Zero:  " << solver5bis1.solve() << std::endl;
+    std::cout << "Zero: " << solver5bis1.solve() << std::endl;
     std::cout << std::endl;
 
     std::cout << "An interval does not exist, constructor:" << std::endl;
@@ -130,7 +131,7 @@ int main(int argc, char **argv)
     {
         Bisection solver5bis2(f1, -1, 1.e-5);
 
-        std::cout << "Zero:  " << solver5bis2.solve() << std::endl;
+        std::cout << "Zero: " << solver5bis2.solve() << std::endl;
         std::cout << std::endl;
     }
     catch (const std::exception &e)
@@ -143,7 +144,8 @@ int main(int argc, char **argv)
     std::cout << std::endl;
 
     auto solver5bis3 = SolverFactory<Bisection>(f1, -1, 1.e-5);
-    std::cout << "Zero:  " << solver5bis3->solve() << std::endl;
+    auto result5bis3 = SafeSolve(solver5bis3);
+    std::cout << "Zero: " << result5bis3 << std::endl;
     std::cout << std::endl;
 
     // QuasiNewton
@@ -157,7 +159,7 @@ int main(int argc, char **argv)
     QuasiNewton solver6_QN(f1, -0.5, 1e-4, 1e-10, 150);
 
     std::cout << "- Newton: " << solver6_N.solve() << std::endl;
-    std::cout << "- QuasiNewton:  " << solver6_QN.solve() << std::endl;
+    std::cout << "- QuasiNewton: " << solver6_QN.solve() << std::endl;
     std::cout << std::endl;
 
     // Newton -> QuasiNewton
@@ -173,7 +175,7 @@ int main(int argc, char **argv)
     try
     {
         Newton solver7(f, -0.5, 1e-4, 1e-10, 150);
-        std::cout << "Zero:  " << solver7.solve() << std::endl;
+        std::cout << "Zero: " << solver7.solve() << std::endl;
         std::cout << std::endl;
     }
     catch (const std::exception &e)
@@ -186,7 +188,20 @@ int main(int argc, char **argv)
     std::cout << "Factory:" << std::endl;
     std::cout << std::endl;
     auto solver7 = SolverFactory<Newton>(f, -0.5, 1e-4, 1e-10, 150);
-    std::cout << "Zero:  " << solver7->solve() << std::endl;
+    auto result7 = SafeSolve(solver7);
+    std::cout << "Zero: " << result7 << std::endl;
+    std::cout << std::endl;
+
+    // Safe solve
+    std::cout << std::endl;
+    std::cout << "#####################" << std::endl;
+    std::cout << "# Test 8: SafeSolve #" << std::endl;
+    std::cout << "#####################" << std::endl;
+    std::cout << std::endl;
+
+    auto solver8 = SolverFactory<Secant>(f1, std::array<SolverTraits::VariableType, 2>{-1, 1}, 1.e-5);
+    auto result8 = SafeSolve(solver8);
+    std::cout << "Zero: " << result8 << std::endl;
     std::cout << std::endl;
 
     return 0;

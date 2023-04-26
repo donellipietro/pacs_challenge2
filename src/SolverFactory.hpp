@@ -6,7 +6,7 @@
 
 template <class SolverType, class... Args>
 std::unique_ptr<SolverBase>
-SolverFactory(Args &&...args)
+SolverFactory(Args &&...args) noexcept
 {
     if constexpr (std::is_same_v<SolverType, Bisection>)
         try
@@ -19,7 +19,6 @@ SolverFactory(Args &&...args)
             std::cout << std::endl;
             std::cout << "Switching to Secant solver..." << std::endl;
             std::cout << std::endl;
-            std::cout << "Ciao1" << std::endl;
             return SolverFactory<Secant>(std::forward<Args>(args)...);
         }
 
@@ -64,6 +63,23 @@ SolverFactory(Args &&...args)
         }
 
     return nullptr;
+}
+
+SolverTraits::ReturnType SafeSolve(std::unique_ptr<SolverBase> &solver) noexcept
+{
+    SolverTraits::ReturnType result;
+    try
+    {
+        result = solver->solve();
+    }
+    catch (const std::exception &e)
+    {
+        std::cerr << e.what() << std::endl;
+        std::cerr << std::endl;
+        result = std::numeric_limits<SolverTraits::ReturnType>::quiet_NaN();
+    }
+
+    return result;
 }
 
 #endif
