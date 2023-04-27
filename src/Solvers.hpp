@@ -165,13 +165,6 @@ public:
                 double tol = 1e-4,
                 double tola = 1e-10,
                 unsigned int maxIter = 150) : Newton(f, df, x0, tol, tola, maxIter){};
-
-    // setters
-    void setAbsoluteTollerance(double tola)
-    {
-        tola_ = tola;
-    };
-    void setInitializationPoint(T::VariableType x0) { x0_ = x0; };
 };
 
 class RegulaFalsi : public SolverBase
@@ -201,6 +194,38 @@ public:
     void setA(T::VariableType a) { a_ = a; };
     void setB(T::VariableType b) { b_ = b; };
     void setAbsoluteTollerance(double tola) { tola_ = tola; };
+
+    // methods
+    T::VariableType solve() override;
+};
+
+class BrentSearch : public SolverBase
+{
+private:
+    T::VariableType a_;
+    T::VariableType b_;
+    unsigned int maxIter_;
+
+public:
+    // constructors
+    BrentSearch() = default;
+    BrentSearch(const T::FunctionType &f,
+                T::VariableType x1,
+                double tol = 1e-4,
+                unsigned int maxIter = 150) : SolverBase(f, tol), maxIter_(maxIter)
+    {
+        searchBracketInterval(f_, x1, a_, b_);
+    }
+    BrentSearch(const T::FunctionType &f, std::array<T::VariableType, 2> interval, double tol = 1e-4, unsigned int maxIter = 150)
+        : SolverBase(f, tol), a_(interval[0]), b_(interval[1]), maxIter_(maxIter)
+    {
+        checkChangeOfSign(f_, a_, b_);
+    }
+
+    // setters
+    void setA(T::VariableType a) { a_ = a; };
+    void setB(T::VariableType b) { b_ = b; };
+    void setMaxIter(unsigned int maxIter) { maxIter_ = maxIter; };
 
     // methods
     T::VariableType solve() override;

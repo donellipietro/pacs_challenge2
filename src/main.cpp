@@ -51,6 +51,11 @@ int main(int argc, char **argv)
     auto result5 = SafeSolve(solver5);
     std::cout << std::setw(15) << std::left << "- RegulaFalsi: " << result5 << std::endl;
 
+    // BrentSearch
+    auto solver6 = SolverFactory<RegulaFalsi>(f, interval);
+    auto result6 = SafeSolve(solver6);
+    std::cout << std::setw(15) << std::left << "- BrentSearch: " << result6 << std::endl;
+
     std::cout << std::endl;
 
     return 0;

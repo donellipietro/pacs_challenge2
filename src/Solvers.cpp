@@ -124,6 +124,92 @@ SolverTraits::VariableType RegulaFalsi::solve()
     return c;
 };
 
+// BrentSearch solve method
+SolverTraits::VariableType BrentSearch::solve()
+{
+    T::VariableType a{a_};
+    T::VariableType b{b_};
+
+    T::ReturnType ya = f_(a);
+    T::ReturnType yb = f_(b);
+
+    if (std::abs(ya) < std::abs(yb))
+    {
+        std::swap(a, b);
+        std::swap(ya, yb);
+    }
+
+    T::VariableType c{a};
+    T::VariableType d{c};
+    T::ReturnType yc = ya;
+    bool mflag{true};
+    T::VariableType s = b;
+    T::ReturnType ys = yb;
+    unsigned iter{0u};
+
+    do
+    {
+        //
+        if (ya != yc and yb != yc)
+        {
+            auto yab = ya - yb;
+            auto yac = ya - yc;
+            auto ycb = yc - yb;
+            // inverse quadratic interpolation
+            s = a * ya * yc / (yab * yac) + b * ya * yc / (yab * ycb) -
+                c * ya * yb / (yac * ycb);
+        }
+        else
+        {
+            // secant
+            s = b - yb * (b - a) / (yb - ya);
+        }
+        //
+        if (((s - 3 * (a + b) / 4) * (s - b) >= 0) or // condition 1
+            (mflag and
+             (std::abs(s - b) >= 0.5 * std::abs(b - c))) or // condition 2
+            (!mflag and
+             (std::abs(s - b) >= 0.5 * std::abs(c - d))) or // condition 3
+            (mflag and (std::abs(b - c) < tol_)) or         // condition 4
+            (!mflag and (std::abs(c - d) < tol_))           // condition 5
+        )
+        {
+            mflag = true;
+            s = 0.5 * (a + b); // back to bisection step
+        }
+        else
+            mflag = false;
+        //
+        ys = f_(s);
+        d = c;
+        c = b;
+        yc = yb;
+        //
+        if (ya * ys < 0)
+        {
+            b = s;
+            yb = ys;
+        }
+        else
+        {
+            a = s;
+            ya = ys;
+        }
+        //
+        if (std::abs(ya) < std::abs(yb))
+        {
+            std::swap(a, b);
+            std::swap(ya, yb);
+        }
+        //
+    } while (ys != 0. && std::abs(b - a) > tol_ && iter < maxIter_);
+
+    if (iter == maxIter_)
+        throw std::overflow_error("The maximum number of iterations has been reached without convergence!");
+
+    return s;
+};
+
 /* This function checks that the evaluations of the function at the two ends of the provided interval have opposite sign.
  * If this is not the case the function tries to find a valid interval by calling the function bracketInterval.
  * In the worst case an exception is thrown.

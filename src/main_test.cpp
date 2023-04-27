@@ -64,6 +64,20 @@ int main(int argc, char **argv)
     std::cout << "- SolverBase:  " << solver2_1.solve() << std::endl;
     std::cout << std::endl;
 
+    // BrentSearch
+    std::cout << std::endl;
+    std::cout << "#########################" << std::endl;
+    std::cout << "# Test 2.2: BrentSearch #" << std::endl;
+    std::cout << "#########################" << std::endl;
+    std::cout << std::endl;
+
+    BrentSearch solver2_2(f, std::array<SolverTraits::VariableType, 2>{-1, 0}, 1.e-5);
+    auto [result2_2, status2_2] = apsc::brent_search<SolverTraits::FunctionType>(f, -1, 0, 1.e-5);
+
+    std::cout << "- basiZeroFun: " << result2_2 << std::endl;
+    std::cout << "- SolverBase:  " << solver2_2.solve() << std::endl;
+    std::cout << std::endl;
+
     // Newton
     std::cout << std::endl;
     std::cout << "##################" << std::endl;
