@@ -3,6 +3,7 @@
 
 #include "SolverBase.hpp"
 #include <array>
+#include <limits>
 
 void checkChangeOfSign(const SolverTraits::FunctionType &f,
                        SolverTraits::VariableType &a, SolverTraits::VariableType &b);
@@ -61,12 +62,11 @@ public:
     Bisection() = default;
     Bisection(const T::FunctionType &f,
               T::VariableType x1,
-              double tol = 1e-4,
-              unsigned int maxIter = 150) : SolverBase(f, tol)
+              double tol = 1e-4) : SolverBase(f, tol)
     {
         searchBracketInterval(f_, x1, a_, b_);
     }
-    Bisection(const T::FunctionType &f, std::array<T::VariableType, 2> interval, double tol = 1e-4, unsigned int maxIter = 150)
+    Bisection(const T::FunctionType &f, std::array<T::VariableType, 2> interval, double tol = 1e-4)
         : SolverBase(f, tol), a_(interval[0]), b_(interval[1])
     {
         checkChangeOfSign(f_, a_, b_);
@@ -172,6 +172,38 @@ public:
         tola_ = tola;
     };
     void setInitializationPoint(T::VariableType x0) { x0_ = x0; };
+};
+
+class RegulaFalsi : public SolverBase
+{
+private:
+    T::VariableType a_;
+    T::VariableType b_;
+    double tola_;
+
+public:
+    // constructors
+    RegulaFalsi() = default;
+    RegulaFalsi(const T::FunctionType &f,
+                T::VariableType x1,
+                double tol = 1e-4,
+                double tola = 1e-10) : SolverBase(f, tol), tola_(tola)
+    {
+        searchBracketInterval(f_, x1, a_, b_);
+    }
+    RegulaFalsi(const T::FunctionType &f, std::array<T::VariableType, 2> interval, double tol = 1e-4, double tola = 1e-10)
+        : SolverBase(f, tol), a_(interval[0]), b_(interval[1]), tola_(tola)
+    {
+        checkChangeOfSign(f_, a_, b_);
+    }
+
+    // setters
+    void setA(T::VariableType a) { a_ = a; };
+    void setB(T::VariableType b) { b_ = b; };
+    void setAbsoluteTollerance(double tola) { tola_ = tola; };
+
+    // methods
+    T::VariableType solve() override;
 };
 
 #endif // __SOLVERS__

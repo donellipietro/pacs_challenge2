@@ -23,6 +23,21 @@ SolverFactory(Args &&...args) noexcept
             return SolverFactory<Secant>(std::forward<Args>(args)...);
         }
 
+    if constexpr (std::is_same_v<SolverType, RegulaFalsi>)
+        try
+        {
+            // Possible problem: no change of sign at the ends and a new interval can not be found
+            return std::make_unique<RegulaFalsi>(std::forward<Args>(args)...);
+        }
+        catch (const std::exception &e)
+        {
+            std::cout << e.what() << std::endl;
+            std::cout << std::endl;
+            std::cout << "Switching to Secant solver..." << std::endl;
+            std::cout << std::endl;
+            return SolverFactory<Secant>(std::forward<Args>(args)...);
+        }
+
     if constexpr (std::is_same_v<SolverType, Secant>)
         try
         {

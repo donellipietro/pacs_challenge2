@@ -15,7 +15,7 @@ SolverTraits::VariableType Secant::solve()
         double yb = f_(b_);
         double den = (yb - ya);
         if (den == 0)
-            throw std::invalid_argument("Division by zero detected, method stopped.");
+            throw std::overflow_error("Division by zero detected, method stopped.");
         c = a_ - ya * (b_ - a_) / den;
         double yc = f_(c);
         resid = std::abs(yc);
@@ -26,7 +26,7 @@ SolverTraits::VariableType Secant::solve()
 
     if (iter == maxIter_)
     {
-        throw std::invalid_argument("The maximum number of iterations has been reached without convergence!");
+        throw std::overflow_error("The maximum number of iterations has been reached without convergence!");
     }
 
     return c;
@@ -73,7 +73,7 @@ SolverTraits::VariableType Newton::solve()
         ++iter;
         auto dfa = df_(a);
         if (dfa == 0)
-            throw std::invalid_argument("Division by zero detected, method stopped.");
+            throw std::overflow_error("Division by zero detected, method stopped.");
         a += -ya / dfa;
         ya = f_(a);
         resid = std::abs(ya);
@@ -82,10 +82,46 @@ SolverTraits::VariableType Newton::solve()
 
     if (iter == maxIter_)
     {
-        throw std::invalid_argument("The maximum number of iterations has been reached without convergence!");
+        throw std::overflow_error("The maximum number of iterations has been reached without convergence!");
     }
 
     return a;
+};
+
+// RegulaFalsi solve method
+SolverTraits::VariableType RegulaFalsi::solve()
+{
+    T::ReturnType ya = f_(a_);
+    T::ReturnType yb = f_(b_);
+    double delta = b_ - a_;
+    T::ReturnType yc{ya};
+    T::VariableType c{a_};
+    double resid0 = std::max(std::abs(ya), std::abs(yb));
+    double incr = std::numeric_limits<double>::max();
+    constexpr double small = 10.0 * std::numeric_limits<double>::epsilon();
+
+    while (std::abs(yc) > tol_ * resid0 + tola_ && incr > small)
+    {
+        double incra = -ya / (yb - ya);
+        double incrb = 1. - incra;
+        double incr = std::min(incra, incrb);
+        if (!(std::max(incra, incrb) <= 1.0 && incr >= 0))
+            throw std::overflow_error("Chord is failing");
+        c = a_ + incra * delta;
+        yc = f_(c);
+        if (yc * ya < 0.0)
+        {
+            yb = yc;
+            b_ = c;
+        }
+        else
+        {
+            ya = yc;
+            a_ = c;
+        }
+        delta = b_ - a_;
+    }
+    return c;
 };
 
 /* This function checks that the evaluations of the function at the two ends of the provided interval have opposite sign.

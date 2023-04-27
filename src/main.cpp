@@ -46,6 +46,11 @@ int main(int argc, char **argv)
     auto result4 = SafeSolve(solver4);
     std::cout << std::setw(15) << std::left << "- QuasiNewton: " << result4 << std::endl;
 
+    // RegulaFalsi
+    auto solver5 = SolverFactory<RegulaFalsi>(f, interval);
+    auto result5 = SafeSolve(solver5);
+    std::cout << std::setw(15) << std::left << "- RegulaFalsi: " << result5 << std::endl;
+
     std::cout << std::endl;
 
     return 0;

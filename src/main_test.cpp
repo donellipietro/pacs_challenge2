@@ -50,10 +50,24 @@ int main(int argc, char **argv)
     std::cout << "- SolverBase:  " << solver2.solve() << std::endl;
     std::cout << std::endl;
 
+    // RegulaFalsi
+    std::cout << std::endl;
+    std::cout << "#########################" << std::endl;
+    std::cout << "# Test 2.1: RegulaFalsi #" << std::endl;
+    std::cout << "#########################" << std::endl;
+    std::cout << std::endl;
+
+    RegulaFalsi solver2_1(f, std::array<SolverTraits::VariableType, 2>{-1, 0}, 1.e-5, 1.e-10);
+    auto result2_1 = apsc::regulaFalsi<SolverTraits::FunctionType>(f, -1, 0, 1.e-5, 1.e-10);
+
+    std::cout << "- basiZeroFun: " << result2_1 << std::endl;
+    std::cout << "- SolverBase:  " << solver2_1.solve() << std::endl;
+    std::cout << std::endl;
+
     // Newton
     std::cout << std::endl;
     std::cout << "##################" << std::endl;
-    std::cout << "# Test 2: Newton #" << std::endl;
+    std::cout << "# Test 3: Newton #" << std::endl;
     std::cout << "##################" << std::endl;
     std::cout << std::endl;
 
