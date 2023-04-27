@@ -1,5 +1,6 @@
 #include "Solvers.hpp"
 
+// Secant solve method
 SolverTraits::VariableType Secant::solve()
 {
     T::ReturnType ya = f_(a_);
@@ -31,6 +32,7 @@ SolverTraits::VariableType Secant::solve()
     return c;
 };
 
+// Bisection solve method
 SolverTraits::VariableType Bisection::solve()
 {
     T::ReturnType ya = f_(a_);
@@ -55,6 +57,7 @@ SolverTraits::VariableType Bisection::solve()
     return (a_ + b_) / 2.;
 };
 
+// Newton solve method
 SolverTraits::VariableType Newton::solve()
 {
 
@@ -85,6 +88,10 @@ SolverTraits::VariableType Newton::solve()
     return a;
 };
 
+/* This function checks that the evaluations of the function at the two ends of the provided interval have opposite sign.
+ * If this is not the case the function tries to find a valid interval by calling the function bracketInterval.
+ * In the worst case an exception is thrown.
+ */
 void checkChangeOfSign(const SolverTraits::FunctionType &f, SolverTraits::VariableType &a, SolverTraits::VariableType &b)
 {
     if (f(a) * f(b) > 0)
@@ -121,6 +128,9 @@ void checkChangeOfSign(const SolverTraits::FunctionType &f, SolverTraits::Variab
     }
 }
 
+/* This function searches a valid interval given an initial point.
+ * In the worst case an exception is thrown.
+ */
 void searchBracketInterval(const SolverTraits::FunctionType &f,
                            SolverTraits::VariableType x1, SolverTraits::VariableType &a, SolverTraits::VariableType &b)
 {

@@ -11,6 +11,7 @@ SolverFactory(Args &&...args) noexcept
     if constexpr (std::is_same_v<SolverType, Bisection>)
         try
         {
+            // Possible problem: no change of sign at the ends and a new interval can not be found
             return std::make_unique<Bisection>(std::forward<Args>(args)...);
         }
         catch (const std::exception &e)
@@ -25,6 +26,7 @@ SolverFactory(Args &&...args) noexcept
     if constexpr (std::is_same_v<SolverType, Secant>)
         try
         {
+            // Possible problem: solver is initialized with a point instead of an interval
             auto ptr = std::make_unique<Secant>(std::forward<Args>(args)...);
             return ptr;
         }
@@ -40,6 +42,7 @@ SolverFactory(Args &&...args) noexcept
     if constexpr (std::is_same_v<SolverType, Newton>)
         try
         {
+            // Possible problem: Newton is initialized without the derivative of the function
             return std::make_unique<Newton>(std::forward<Args>(args)...);
         }
         catch (const std::exception &e)
